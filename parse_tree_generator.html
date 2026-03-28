@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parse Tree Generator - TOC Mini Project</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #e8e4d9;
+        --black: #1a1a1a;
+        --white: #ffffff;
+        --yellow: #ffde59;
+        --pink: #ff6b9d;
+        --blue: #4ecdc4;
+        --purple: #a855f7;
+        --lime: #a3e635;
+        --orange: #ff9f43;
+        --red: #ff4757;
+        --shadow: 4px 4px 0px var(--black);
+        --border: 3px solid var(--black);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        background: var(--bg);
+        background-image: radial-gradient(circle, #ccc8bd 1px, transparent 1px);
+        background-size: 16px 16px;
+        color: var(--black);
+      }
+
+      /* HEADER */
+      header {
+        background: var(--black);
+        color: var(--white);
+        padding: 6px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      header h1 {
+        font-family: "Space Mono", monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      header p {
+        font-size: 0.6rem;
+        opacity: 0.7;
+      }
+
+      .header-badge {
+        background: var(--yellow);
+        color: var(--black);
+        padding: 4px 12px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        border: 2px solid var(--black);
+      }
+
+      /* MAIN LAYOUT - 2 Columns */
+      .container {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        height: calc(100vh - 42px);
+        gap: 10px;
+        padding: 10px;
+      }
+
+      /* LEFT PANEL */
+      .left-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+      }
+
+      /* CARDS */
+      .card {
+        background: var(--white);
+        border: var(--border);
+        box-shadow: var(--shadow);
+        padding: 8px 10px;
+      }
+
+      .card h3 {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--pink);
+      }
+
+      .card-yellow {
+        background: var(--yellow);
+      }
+      .card-blue {
+        background: var(--blue);
+      }
+      .card-pink {
+        background: var(--pink);
+      }
+
+      /* GRAMMAR */
+      .grammar-input {
+        width: 100%;
+        height: 72px;
+        padding: 6px 8px;
+        border: 2px solid var(--black);
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        line-height: 1.5;
+        background: var(--white);
+        resize: none;
+        outline: none;
+      }
+
+      .grammar-input:focus {
+        background: #fffef0;
+      }
+
+      /* INPUT */
+      input[type="text"] {
+        width: 100%;
+        padding: 8px 10px;
+        border: 2px solid var(--black);
+        font-size: 0.8rem;
+        font-family: "Space Mono", monospace;
+        background: var(--white);
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        background: var(--yellow);
+      }
+
+      /* PRESETS */
+      .presets-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .preset-btn {
+        background: var(--white);
+        border: 2px solid var(--black);
+        padding: 3px 6px;
+        font-size: 0.6rem;
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .preset-btn:hover {
+        background: var(--yellow);
+      }
+      .preset-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+
+      /* START BUTTON */
+      .btn-start {
+        width: 100%;
+        background: var(--lime);
+        border: var(--border);
+        padding: 10px;
+        font-size: 0.85rem;
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+
+      .btn-start:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0 var(--black);
+      }
+      .btn-start:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
+      }
+
+      /* CONTROLS */
+      .controls-row {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .ctrl-btn {
+        background: var(--white);
+        border: 2px solid var(--black);
+        padding: 5px 8px;
+        font-size: 0.65rem;
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .ctrl-btn:hover {
+        transform: translate(-1px, -1px);
+      }
+      .ctrl-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+      .ctrl-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .ctrl-btn.play {
+        background: var(--lime);
+      }
+      .ctrl-btn.pause {
+        background: var(--orange);
+      }
+
+      .step-badge {
+        background: var(--purple);
+        color: var(--white);
+        padding: 5px 8px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        border: 2px solid var(--black);
+      }
+
+      .speed-ctrl {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.55rem;
+        font-weight: 700;
+      }
+
+      .speed-ctrl input {
+        width: 45px;
+      }
+
+      /* RIGHT - TREE AREA */
+      .tree-area {
+        background: var(--white);
+        border: 4px solid var(--black);
+        box-shadow: 6px 6px 0 var(--black);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        background: var(--black);
+        color: var(--white);
+        padding: 6px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 36px;
+      }
+
+      .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #666;
+        border-radius: 0;
+      }
+
+      .status-dot.ok {
+        background: var(--lime);
+      }
+      .status-dot.err {
+        background: var(--red);
+      }
+      .status-dot.running {
+        background: var(--yellow);
+        animation: blink 0.5s infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* STEP DISPLAY - Near Tree */
+      .step-display {
+        background: var(--purple);
+        color: var(--white);
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid var(--black);
+      }
+
+      .step-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .step-num {
+        background: var(--yellow);
+        color: var(--black);
+        padding: 4px 10px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border: 2px solid var(--black);
+      }
+
+      .step-rule {
+        font-family: "Space Mono", monospace;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .step-rule .lhs {
+        color: var(--yellow);
+      }
+      .step-rule .arrow {
+        color: var(--pink);
+        margin: 0 6px;
+      }
+      .step-rule .rhs {
+        color: var(--lime);
+      }
+
+      .step-explain {
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        opacity: 0.9;
+        max-width: 280px;
+        text-align: right;
+      }
+
+      /* TREE CONTAINER */
+      .tree-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: auto;
+        padding: 15px;
+      }
+
+      .empty-state {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .empty-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--yellow);
+        border: 3px solid var(--black);
+        box-shadow: 4px 4px 0 var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 12px;
+      }
+
+      .empty-state p {
+        font-family: "Space Mono", monospace;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .empty-state .sub {
+        font-size: 0.7rem;
+        font-weight: 400;
+        margin-top: 4px;
+        opacity: 0.6;
+        text-transform: none;
+      }
+
+      #tree-svg {
+        display: none;
+      }
+
+      /* BOTTOM - STEPS LIST */
+      .steps-bar {
+        background: var(--black);
+        padding: 8px 12px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        overflow-x: auto;
+        border-top: 3px solid var(--black);
+      }
+
+      .steps-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: var(--pink);
+        white-space: nowrap;
+      }
+
+      .step-chip {
+        background: #333;
+        color: var(--white);
+        padding: 4px 8px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        font-weight: 700;
+        white-space: nowrap;
+        border: 2px solid #444;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .step-chip:hover {
+        background: #444;
+      }
+      .step-chip.completed {
+        background: var(--blue);
+        color: var(--black);
+        border-color: var(--blue);
+      }
+      .step-chip.current {
+        background: var(--pink);
+        border-color: var(--pink);
+        transform: scale(1.05);
+      }
+      .step-chip.pending {
+        opacity: 0.4;
+      }
+      .step-chip.final {
+        background: var(--lime);
+        color: var(--black);
+        border-color: var(--lime);
+      }
+
+      /* LEGEND */
+      .legend {
+        position: absolute;
+        bottom: 55px;
+        right: 10px;
+        background: var(--white);
+        border: 2px solid var(--black);
+        box-shadow: 2px 2px 0 var(--black);
+        padding: 5px 8px;
+        display: flex;
+        gap: 10px;
+        font-family: "Space Mono", monospace;
+        font-size: 0.5rem;
+        font-weight: 700;
+      }
+
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .leg-box {
+        width: 10px;
+        height: 10px;
+        border: 2px solid var(--black);
+      }
+      .leg-nt {
+        background: var(--purple);
+      }
+      .leg-t {
+        background: var(--blue);
+      }
+      .leg-hl {
+        background: var(--pink);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Parse Tree Generator</h1>
+        <p>Theory of Computation (BCSE304L) — VIT Vellore</p>
+      </div>
+      <div class="header-badge">Abuzar Siddiqi | 23BCT0186</div>
+    </header>
+
+    <div class="container">
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="card card-yellow">
+          <h3>// CFG Grammar (Enter Your Own!)</h3>
+          <textarea class="grammar-input" id="grammarInput" spellcheck="false">
+S -> a S a | b S b | a | b | e</textarea
+          >
+          <div style="font-size: 0.5rem; margin-top: 4px; color: #333; line-height: 1.4">
+            <strong>Format:</strong> NonTerminal -> symbols | alternate<br>
+            <strong>Tips:</strong> Separate symbols with spaces. Use 'e' for epsilon.<br>
+            First rule's LHS = start symbol. Avoid left recursion (A -> A x).
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>// Input String</h3>
+          <input
+            type="text"
+            id="inputStr"
+            value="a b b a"
+            placeholder="Enter tokens (space-separated or single chars)"
+          />
+          <div style="font-size: 0.5rem; margin-top: 4px; color: #666">
+            For single-char terminals: type directly (abba or a b b a)<br>
+            For multi-char terminals: separate with spaces (id + num)
+          </div>
+        </div>
+
+        <div class="card card-blue">
+          <h3>// Input Presets</h3>
+          <div class="presets-wrap">
+            <button class="preset-btn" onclick="setPreset('a b b a')">abba</button>
+            <button class="preset-btn" onclick="setPreset('a b a')">aba</button>
+            <button class="preset-btn" onclick="setPreset('a a b b')">aabb</button>
+            <button class="preset-btn" onclick="setPreset('a b c')">abc</button>
+            <button class="preset-btn" onclick="setPreset('( a + b )')">
+              (a+b)
+            </button>
+            <button class="preset-btn" onclick="setPreset('x y z')">
+              xyz
+            </button>
+          </div>
+          <div
+            style="
+              margin-top: 6px;
+              border-top: 2px solid var(--black);
+              padding-top: 6px;
+            "
+          >
+            <span style="font-size: 0.5rem; font-weight: 700"
+              >GRAMMAR EXAMPLES:</span
+            >
+            <div class="presets-wrap" style="margin-top: 4px">
+              <button class="preset-btn" onclick="setGrammarPreset('palindrome')">
+                Palindrome
+              </button>
+              <button class="preset-btn" onclick="setGrammarPreset('balanced')">
+                a^n b^n
+              </button>
+              <button class="preset-btn" onclick="setGrammarPreset('expr')">
+                Expr
+              </button>
+              <button class="preset-btn" onclick="setGrammarPreset('simple')">
+                Simple
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-start" onclick="startSimulation()">
+          ▶ START SIMULATION
+        </button>
+
+        <div class="card card-pink">
+          <h3 style="color: #fff">// Playback</h3>
+          <div class="controls-row">
+            <button class="ctrl-btn" id="prevBtn" onclick="prevStep()" disabled>
+              ◀◀
+            </button>
+            <button
+              class="ctrl-btn play"
+              id="playBtn"
+              onclick="togglePlay()"
+              disabled
+            >
+              ▶
+            </button>
+            <button class="ctrl-btn" id="nextBtn" onclick="nextStep()" disabled>
+              ▶▶
+            </button>
+            <div class="step-badge" id="stepCounter">0/0</div>
+          </div>
+          <div class="controls-row" style="margin-top: 5px">
+            <button class="ctrl-btn" onclick="clearAll()">RESET</button>
+            <button
+              class="ctrl-btn"
+              id="skipBtn"
+              onclick="skipToEnd()"
+              disabled
+            >
+              END
+            </button>
+            <div class="speed-ctrl">
+              <span>Speed:</span>
+              <input type="range" id="speedSlider" min="1" max="5" value="2" />
+              <span id="speedLabel">0.75x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT - TREE AREA -->
+      <div class="tree-area">
+        <div class="top-bar">
+          <div class="status-badge">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">READY</span>
+          </div>
+          <span
+            style="
+              font-family: &quot;Space Mono&quot;, monospace;
+              font-size: 0.6rem;
+              opacity: 0.7;
+            "
+            >PARSE TREE VISUALIZATION</span
+          >
+        </div>
+
+        <div class="step-display" id="stepDisplay">
+          <div class="step-info">
+            <div class="step-num" id="stepNum">STEP 0</div>
+            <div class="step-rule" id="stepRule">
+              <span style="opacity: 0.5">Click START to begin...</span>
+            </div>
+          </div>
+          <div class="step-explain" id="stepExplain"></div>
+        </div>
+
+        <div class="tree-container" id="treeContainer">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon" style="font-size: 1.5rem; font-family: 'Space Mono', monospace;">CFG</div>
+            <p>Parse Tree Generator</p>
+            <p class="sub">Enter a grammar and input string, then click START</p>
+          </div>
+          <svg id="tree-svg"></svg>
+        </div>
+
+        <div class="steps-bar">
+          <span class="steps-label">DERIVATION:</span>
+          <div id="stepsChips" style="display: flex; gap: 6px">
+            <span style="opacity: 0.4; font-size: 0.6rem; color: #888"
+              >No steps yet</span
+            >
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="leg">
+            <div class="leg-box leg-nt"></div>
+            Non-term
+          </div>
+          <div class="leg">
+            <div class="leg-box leg-t"></div>
+            Terminal
+          </div>
+          <div class="leg">
+            <div class="leg-box" style="background: #ff9f43;"></div>
+            Epsilon
+          </div>
+          <div class="leg">
+            <div class="leg-box leg-hl"></div>
+            Current
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Grammar
+      var grammar = {},
+        startSymbol = "S",
+        nonTerminals = new Set(),
+        terminals = new Set();
+
+      function parseGrammar(text) {
+        grammar = {};
+        nonTerminals.clear();
+        terminals.clear();
+        var lines = text.trim().split("\n"),
+          first = true;
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (!line) continue;
+          var parts = line.split("->");
+          if (parts.length !== 2) continue;
+          var lhs = parts[0].trim(),
+            rhs = parts[1].trim();
+          if (first) {
+            startSymbol = lhs;
+            first = false;
+          }
+          nonTerminals.add(lhs);
+          grammar[lhs] = rhs.split("|").map(function (a) {
+            return a
+              .trim()
+              .split(/\s+/)
+              .filter(function (s) {
+                return s.length > 0;
+              });
+          });
+        }
+        for (var nt in grammar) {
+          grammar[nt].forEach(function (prod) {
+            prod.forEach(function (sym) {
+              if (!nonTerminals.has(sym)) terminals.add(sym);
+            });
+          });
+        }
+      }
+
+      // Tokenizer - smart tokenization based on grammar terminals
+      function tokenize(input) {
+        input = input.trim();
+        if (input.length === 0) throw new Error("Empty input");
+
+        var result = [];
+
+        // Check if any terminal is multi-character
+        var hasMultiCharTerminals = false;
+        terminals.forEach(function(t) {
+          if (t.length > 1) hasMultiCharTerminals = true;
+        });
+
+        if (hasMultiCharTerminals) {
+          // Use whitespace tokenization for grammars with multi-char terminals (like 'id', 'num')
+          var parts = input.split(/\s+/);
+          for (var i = 0; i < parts.length; i++) {
+            if (parts[i] !== "") result.push(parts[i]);
+          }
+        } else {
+          // Use character-by-character tokenization for single-char terminals
+          // But also try whitespace-separated first
+          var parts = input.split(/\s+/);
+          var isSpaceSeparated = parts.length > 1 || terminals.has(parts[0]);
+
+          if (isSpaceSeparated && parts.every(function(p) { return terminals.has(p) || nonTerminals.has(p); })) {
+            // Whitespace separated tokens that match grammar
+            for (var i = 0; i < parts.length; i++) {
+              if (parts[i] !== "") result.push(parts[i]);
+            }
+          } else {
+            // Character-by-character tokenization
+            for (var i = 0; i < input.length; i++) {
+              var ch = input[i];
+              if (ch !== ' ' && ch !== '\t') {
+                result.push(ch);
+              }
+            }
+          }
+        }
+
+        if (result.length === 0) throw new Error("Empty input after tokenization");
+        result.push("$");
+        return result;
+      }
+
+      // Tree Node
+      var nodeIdCounter = 0;
+      function makeNode(label, children, isTerm) {
+        return {
+          id: nodeIdCounter++,
+          label: label,
+          children: children || [],
+          isTerminal: !!isTerm,
+          x: 0,
+          y: 0,
+          w: 0,
+          visible: false,
+          highlighted: false,
+        };
+      }
+
+      // Parser State
+      var tokens = [],
+        pos = 0,
+        steps = [];
+      function peek() {
+        return tokens[pos];
+      }
+      function consume(exp) {
+        if (peek() === exp) {
+          pos++;
+          return exp;
+        }
+        throw new Error("Expected '" + exp + "' but got '" + peek() + "'");
+      }
+      function addStep(lhs, rhs, nodes, explain) {
+        steps.push({
+          lhs: lhs,
+          rhs: rhs,
+          nodesAdded: nodes,
+          explanation: explain,
+        });
+      }
+
+      // Dynamic Parser with exhaustive backtracking
+      // This version properly backtracks across all alternatives
+      function parseWithBacktrack(symbol, inputPos, depth) {
+        if (depth > 300) return [];
+
+        // Terminal handling
+        if (!nonTerminals.has(symbol)) {
+          if (symbol === "e" || symbol === "ε" || symbol === "epsilon") {
+            return [{ node: makeNode("ε", [], true), endPos: inputPos, isEpsilon: true }];
+          }
+          if (inputPos < tokens.length && tokens[inputPos] === symbol) {
+            return [{ node: makeNode(symbol, [], true), endPos: inputPos + 1, isEpsilon: false }];
+          }
+          return [];
+        }
+
+        // Non-terminal - collect all possible parses
+        var allParses = [];
+        var productions = grammar[symbol];
+        if (!productions) return [];
+
+        for (var p = 0; p < productions.length; p++) {
+          var prod = productions[p];
+          var parseResults = parseProduction(prod, inputPos, depth + 1);
+
+          for (var i = 0; i < parseResults.length; i++) {
+            var pr = parseResults[i];
+            var node = makeNode(symbol, pr.children, false);
+            allParses.push({ node: node, endPos: pr.endPos, prod: prod, isEpsilon: false });
+          }
+        }
+
+        return allParses;
+      }
+
+      // Parse a production (sequence of symbols)
+      function parseProduction(prod, startPos, depth) {
+        if (prod.length === 0) {
+          return [{ children: [], endPos: startPos }];
+        }
+
+        var results = [{ children: [], endPos: startPos }];
+
+        for (var s = 0; s < prod.length; s++) {
+          var sym = prod[s];
+          var newResults = [];
+
+          for (var r = 0; r < results.length; r++) {
+            var current = results[r];
+            var parses = parseWithBacktrack(sym, current.endPos, depth);
+
+            for (var p = 0; p < parses.length; p++) {
+              var parse = parses[p];
+              var newChildren = current.children.slice();
+              // Include ALL nodes including epsilon
+              newChildren.push(parse.node);
+              newResults.push({ children: newChildren, endPos: parse.endPos });
+            }
+          }
+
+          results = newResults;
+          if (results.length === 0) break;
+        }
+
+        return results;
+      }
+
+      // Find the first complete parse that consumes all input
+      function findCompleteParse() {
+        var allParses = parseWithBacktrack(startSymbol, 0, 0);
+
+        for (var i = 0; i < allParses.length; i++) {
+          if (allParses[i].endPos === tokens.length - 1) { // -1 for $ token
+            return allParses[i];
+          }
+        }
+        return null;
+      }
+
+      // Build derivation steps from the parse tree - step by step
+      function buildSteps(node, stepsArr) {
+        // First, add the root node
+        buildStepsRecursive(node, stepsArr);
+
+        // Add final step showing the derived expression
+        var expression = getTerminals(node);
+        stepsArr.push({
+          lhs: "Result",
+          rhs: expression,
+          nodesAdded: [],
+          explanation: "Final expression: " + expression,
+          isFinal: true
+        });
+      }
+
+      function buildStepsRecursive(node, stepsArr) {
+        if (node.isTerminal) return;
+
+        // Find the production used (from children labels)
+        var childLabels = node.children.map(function(c) { return c.label; });
+
+        // Add step for this node with its immediate children
+        var rhsStr = childLabels.length > 0 ? childLabels.join(" ") : "ε";
+        stepsArr.push({
+          lhs: node.label,
+          rhs: rhsStr,
+          nodesAdded: [node].concat(node.children),
+          explanation: node.label + " → " + rhsStr
+        });
+
+        // Recurse to children (non-terminals only)
+        for (var i = 0; i < node.children.length; i++) {
+          if (!node.children[i].isTerminal) {
+            buildStepsRecursive(node.children[i], stepsArr);
+          }
+        }
+      }
+
+      // Get terminal symbols from tree (left to right)
+      function getTerminals(node) {
+        if (node.isTerminal) {
+          return node.label === "ε" ? "" : node.label;
+        }
+        var result = [];
+        for (var i = 0; i < node.children.length; i++) {
+          var term = getTerminals(node.children[i]);
+          if (term) result.push(term);
+        }
+        return result.join(" ");
+      }
+
+      // Get terminal nodes with positions (for animation)
+      function getTerminalNodes(node, arr) {
+        if (!arr) arr = [];
+        if (node.isTerminal && node.label !== "ε") {
+          arr.push(node);
+        }
+        if (node.children) {
+          for (var i = 0; i < node.children.length; i++) {
+            getTerminalNodes(node.children[i], arr);
+          }
+        }
+        return arr;
+      }
+
+      // Animation state
+      var expressionAnimationStep = 0;
+      var expressionAnimationInterval = null;
+      var isAnimatingExpression = false;
+
+      // Legacy parseSymbol for compatibility
+      function parseSymbol(symbol, depth) {
+        // This is now handled by findCompleteParse
+        return { success: false, node: null };
+      }
+
+      // Simulation
+      var fullTree = null,
+        currentStep = -1,
+        isPlaying = false,
+        playInterval = null,
+        simulationReady = false;
+
+      // Layout
+      var NODE_W = 46,
+        NODE_H = 28,
+        H_GAP = 10,
+        V_GAP = 42;
+
+      function assignWidths(n) {
+        if (!n.children || n.children.length === 0) {
+          n.w = NODE_W + H_GAP;
+          n.x = 0;
+          return;
+        }
+        var cursor = 0;
+        n.children.forEach(function (c) {
+          assignWidths(c);
+          shiftSubtree(c, cursor);
+          cursor += c.w;
+        });
+        n.w = cursor;
+        n.x = (n.children[0].x + n.children[n.children.length - 1].x) / 2;
+      }
+      function shiftSubtree(n, dx) {
+        n.x += dx;
+        if (n.children)
+          n.children.forEach(function (c) {
+            shiftSubtree(c, dx);
+          });
+      }
+      function getMinX(n) {
+        var m = n.x;
+        if (n.children)
+          n.children.forEach(function (c) {
+            m = Math.min(m, getMinX(c));
+          });
+        return m;
+      }
+      function getMaxX(n) {
+        var m = n.x;
+        if (n.children)
+          n.children.forEach(function (c) {
+            m = Math.max(m, getMaxX(c));
+          });
+        return m;
+      }
+      function getMaxY(n) {
+        var m = n.y;
+        if (n.children)
+          n.children.forEach(function (c) {
+            m = Math.max(m, getMaxY(c));
+          });
+        return m;
+      }
+      function assignY(n, y) {
+        n.y = y;
+        if (n.children)
+          n.children.forEach(function (c) {
+            assignY(c, y + NODE_H + V_GAP);
+          });
+      }
+      function layoutTree(root) {
+        assignWidths(root);
+        shiftSubtree(root, -getMinX(root) + NODE_W / 2 + 15);
+        assignY(root, NODE_H / 2 + 15);
+      }
+
+      // Visibility - show nodes step by step
+      function setAllInvisible(n) {
+        n.visible = false;
+        n.highlighted = false;
+        if (n.children) n.children.forEach(setAllInvisible);
+      }
+      function setAllVisible(n) {
+        n.visible = true;
+        if (n.children) n.children.forEach(setAllVisible);
+      }
+      function updateVisibility(idx) {
+        if (!fullTree) return;
+        setAllInvisible(fullTree);
+
+        // For final step, show all nodes
+        if (idx >= 0 && idx < steps.length && steps[idx].isFinal) {
+          setAllVisible(fullTree);
+          highlightTerminals(fullTree);
+          return;
+        }
+
+        // Show all nodes added up to current step
+        for (var s = 0; s <= idx && s < steps.length; s++) {
+          if (steps[s].nodesAdded) {
+            steps[s].nodesAdded.forEach(function(n) {
+              n.visible = true;
+            });
+          }
+        }
+
+        // Highlight nodes added in current step
+        if (idx >= 0 && idx < steps.length && steps[idx].nodesAdded) {
+          steps[idx].nodesAdded.forEach(function (n) {
+            n.highlighted = true;
+          });
+        }
+      }
+
+      function highlightTerminals(n) {
+        if (!n.visible) return;
+        if (n.isTerminal && n.label !== "ε") {
+          n.highlighted = true;
+        }
+        if (n.children) {
+          n.children.forEach(highlightTerminals);
+        }
+      }
+
+      // SVG
+      function svgEl(tag, attrs) {
+        var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function drawEdges(svg, n) {
+        if (!n.children || !n.visible) return;
+        n.children.forEach(function (c) {
+          if (!c.visible) return;
+          svg.appendChild(
+            svgEl("line", {
+              x1: n.x,
+              y1: n.y + NODE_H / 2,
+              x2: c.x,
+              y2: c.y - NODE_H / 2,
+              stroke: c.highlighted ? "#ff6b9d" : "#1a1a1a",
+              "stroke-width": c.highlighted ? "3" : "2",
+            }),
+          );
+          drawEdges(svg, c);
+        });
+      }
+
+      function drawNodes(svg, n) {
+        if (!n.visible) return;
+        var nw = NODE_W,
+          nh = NODE_H,
+          rx = n.x - nw / 2,
+          ry = n.y - nh / 2;
+        // Check if this is an epsilon node
+        var isEpsilon = n.label === "ε" || n.label === "e" || n.label === "epsilon";
+        var fill = n.highlighted
+          ? "#ff6b9d"
+          : isEpsilon
+            ? "#ff9f43"  // Orange for epsilon
+            : n.isTerminal
+              ? "#4ecdc4"
+              : "#a855f7";
+        svg.appendChild(
+          svgEl("rect", {
+            x: rx + 3,
+            y: ry + 3,
+            width: nw,
+            height: nh,
+            fill: "#1a1a1a",
+          }),
+        );
+        svg.appendChild(
+          svgEl("rect", {
+            x: rx,
+            y: ry,
+            width: nw,
+            height: nh,
+            fill: fill,
+            stroke: "#1a1a1a",
+            "stroke-width": "2",
+          }),
+        );
+        var txt = svgEl("text", {
+          x: n.x,
+          y: n.y + 4,
+          "text-anchor": "middle",
+          "font-family": "Space Mono, monospace",
+          "font-size": n.label.length > 3 ? 8 : 10,
+          "font-weight": "700",
+          fill: "#fff",
+        });
+        txt.textContent = n.label;
+        svg.appendChild(txt);
+        if (n.children)
+          n.children.forEach(function (c) {
+            drawNodes(svg, c);
+          });
+      }
+
+      function renderTree() {
+        if (!fullTree) return;
+        layoutTree(fullTree);
+
+        // Check if we're on the final step - need extra space for expression
+        var isFinalStep = currentStep >= 0 && currentStep < steps.length && steps[currentStep].isFinal;
+        var extraHeight = isFinalStep ? 80 : 0;
+
+        var treeW = getMaxX(fullTree) + NODE_W / 2 + 25,
+          treeH = getMaxY(fullTree) + NODE_H / 2 + 25 + extraHeight;
+        var svg = document.getElementById("tree-svg");
+        svg.innerHTML = "";
+        svg.setAttribute("viewBox", "0 0 " + treeW + " " + treeH);
+        var container = document.getElementById("treeContainer");
+        var maxW = container.clientWidth - 30,
+          maxH = container.clientHeight - 30;
+        var scale = Math.min(maxW / treeW, maxH / treeH, 1.1);
+        svg.setAttribute("width", treeW * scale);
+        svg.setAttribute("height", treeH * scale);
+        drawEdges(svg, fullTree);
+        drawNodes(svg, fullTree);
+
+        // Draw expression animation on final step
+        if (isFinalStep) {
+          drawExpressionAnimation(svg, treeW, getMaxY(fullTree) + NODE_H / 2 + 20);
+        }
+      }
+
+      // Draw the expression forming animation
+      function drawExpressionAnimation(svg, treeW, startY) {
+        var terminalNodes = getTerminalNodes(fullTree);
+        if (terminalNodes.length === 0) return;
+
+        var expressionY = startY + 35;
+        var totalWidth = terminalNodes.length * (NODE_W + 8);
+        var startX = (treeW - totalWidth) / 2 + NODE_W / 2;
+
+        // Draw "YIELD:" label
+        var label = svgEl("text", {
+          x: treeW / 2,
+          y: startY + 5,
+          "text-anchor": "middle",
+          "font-family": "Space Mono, monospace",
+          "font-size": "10",
+          "font-weight": "700",
+          fill: "#666"
+        });
+        label.textContent = "YIELD:";
+        svg.appendChild(label);
+
+        // Draw arrow line from tree to expression
+        svg.appendChild(svgEl("line", {
+          x1: treeW / 2,
+          y1: startY + 10,
+          x2: treeW / 2,
+          y2: startY + 20,
+          stroke: "#a855f7",
+          "stroke-width": "2",
+          "stroke-dasharray": "4,2"
+        }));
+
+        // Draw each terminal with CSS animation classes
+        for (var i = 0; i < terminalNodes.length; i++) {
+          var node = terminalNodes[i];
+          var targetX = startX + i * (NODE_W + 8);
+
+          // Draw connecting line from node to expression
+          var line = svgEl("line", {
+            x1: node.x,
+            y1: node.y + NODE_H / 2,
+            x2: targetX,
+            y2: expressionY - NODE_H / 2,
+            stroke: "#ff6b9d",
+            "stroke-width": "2",
+            "stroke-dasharray": "4,2",
+            opacity: "0.5"
+          });
+          svg.appendChild(line);
+
+          // Shadow
+          svg.appendChild(svgEl("rect", {
+            x: targetX - NODE_W / 2 + 2,
+            y: expressionY - NODE_H / 2 + 2,
+            width: NODE_W,
+            height: NODE_H,
+            fill: "#1a1a1a"
+          }));
+
+          // Box - lime green for expression
+          svg.appendChild(svgEl("rect", {
+            x: targetX - NODE_W / 2,
+            y: expressionY - NODE_H / 2,
+            width: NODE_W,
+            height: NODE_H,
+            fill: "#a3e635",
+            stroke: "#1a1a1a",
+            "stroke-width": "2"
+          }));
+
+          // Text
+          var txt = svgEl("text", {
+            x: targetX,
+            y: expressionY + 4,
+            "text-anchor": "middle",
+            "font-family": "Space Mono, monospace",
+            "font-size": node.label.length > 3 ? "8" : "10",
+            "font-weight": "700",
+            fill: "#1a1a1a"
+          });
+          txt.textContent = node.label;
+          svg.appendChild(txt);
+        }
+
+        // Draw final expression text
+        var finalExprY = expressionY + NODE_H / 2 + 18;
+        var expr = terminalNodes.map(function(n) { return n.label; }).join(" ");
+
+        // Background for expression
+        var bgWidth = expr.length * 8 + 40;
+        svg.appendChild(svgEl("rect", {
+          x: treeW / 2 - bgWidth / 2,
+          y: finalExprY - 12,
+          width: bgWidth,
+          height: 20,
+          fill: "#1a1a1a",
+          rx: "3"
+        }));
+
+        var equalsLabel = svgEl("text", {
+          x: treeW / 2,
+          y: finalExprY,
+          "text-anchor": "middle",
+          "font-family": "Space Mono, monospace",
+          "font-size": "11",
+          "font-weight": "700",
+          fill: "#a3e635"
+        });
+        equalsLabel.textContent = "= " + expr;
+        svg.appendChild(equalsLabel);
+      }
+
+      // UI Updates
+      function updateStepDisplay() {
+        var numEl = document.getElementById("stepNum");
+        var ruleEl = document.getElementById("stepRule");
+        var expEl = document.getElementById("stepExplain");
+        if (currentStep < 0 || currentStep >= steps.length) {
+          numEl.textContent = "STEP 0";
+          ruleEl.innerHTML = '<span style="opacity:0.5;">Starting...</span>';
+          expEl.textContent = "";
+          return;
+        }
+        var s = steps[currentStep];
+
+        if (s.isFinal) {
+          // Final step - show the derived expression
+          numEl.textContent = "COMPLETE";
+          numEl.style.background = "#a3e635"; // Lime green
+          ruleEl.innerHTML =
+            '<span style="color:#a3e635;">Expression:</span> ' +
+            '<span style="color:#fff; font-weight:bold;">' + s.rhs + '</span>';
+          expEl.textContent = "Tree yields: " + s.rhs;
+        } else {
+          numEl.textContent = "STEP " + (currentStep + 1);
+          numEl.style.background = "#ffde59"; // Yellow
+          ruleEl.innerHTML =
+            '<span class="lhs">' +
+            s.lhs +
+            '</span><span class="arrow">→</span><span class="rhs">' +
+            s.rhs +
+            "</span>";
+          expEl.textContent = s.explanation;
+        }
+      }
+
+      function updateStepsChips() {
+        var container = document.getElementById("stepsChips");
+        var html = "";
+        for (var i = 0; i < steps.length; i++) {
+          var cls =
+            i < currentStep
+              ? "completed"
+              : i === currentStep
+                ? "current"
+                : "pending";
+
+          var stepLabel;
+          if (steps[i].isFinal) {
+            stepLabel = "✓ " + steps[i].rhs;
+            if (i === currentStep || i < currentStep) cls = "final";
+          } else {
+            stepLabel = (i + 1) + ". " + steps[i].lhs + "→" + steps[i].rhs;
+          }
+
+          html +=
+            '<span class="step-chip ' +
+            cls +
+            '" onclick="goToStep(' +
+            i +
+            ')">' +
+            stepLabel +
+            "</span>";
+        }
+        container.innerHTML =
+          html ||
+          '<span style="opacity:0.4;font-size:0.6rem;color:#888;">No steps</span>';
+      }
+
+      function updateCounter() {
+        document.getElementById("stepCounter").textContent =
+          currentStep + 1 + "/" + steps.length;
+      }
+
+      function updateControls() {
+        document.getElementById("prevBtn").disabled =
+          !simulationReady || currentStep <= 0;
+        document.getElementById("nextBtn").disabled =
+          !simulationReady || currentStep >= steps.length - 1;
+        document.getElementById("playBtn").disabled = !simulationReady;
+        document.getElementById("skipBtn").disabled =
+          !simulationReady || currentStep >= steps.length - 1;
+        var btn = document.getElementById("playBtn");
+        if (isPlaying) {
+          btn.classList.remove("play");
+          btn.classList.add("pause");
+          btn.textContent = "⏸";
+        } else {
+          btn.classList.remove("pause");
+          btn.classList.add("play");
+          btn.textContent = "▶";
+        }
+      }
+
+      function setStatus(type, msg) {
+        document.getElementById("statusDot").className = "status-dot " + type;
+        document.getElementById("statusText").textContent = msg;
+      }
+
+      // Simulation Control
+      function startSimulation() {
+        var grammarText = document.getElementById("grammarInput").value;
+        var input = document.getElementById("inputStr").value.trim();
+        parseGrammar(grammarText);
+        nodeIdCounter = 0;
+        tokens = [];
+        pos = 0;
+        steps = [];
+        currentStep = -1;
+        isPlaying = false;
+        simulationReady = false;
+        if (playInterval) {
+          clearInterval(playInterval);
+          playInterval = null;
+        }
+
+        try {
+          if (Object.keys(grammar).length === 0) {
+            throw new Error("No valid grammar rules found");
+          }
+
+          // Check for direct left recursion and warn
+          for (var nt in grammar) {
+            var prods = grammar[nt];
+            for (var i = 0; i < prods.length; i++) {
+              if (prods[i].length > 0 && prods[i][0] === nt) {
+                throw new Error(
+                  "Left recursion detected in '" +
+                    nt +
+                    "'. Convert to right-recursive form.",
+                );
+              }
+            }
+          }
+
+          tokens = tokenize(input);
+
+          // Use exhaustive backtracking parser
+          var parseResult = findCompleteParse();
+
+          if (!parseResult) {
+            // Provide helpful error message
+            var tokensStr = tokens.slice(0, -1).join(" "); // exclude $
+            var terminalsArr = Array.from(terminals);
+            var ntArr = Array.from(nonTerminals);
+            var errMsg = "Input does not match grammar.\n";
+            errMsg += "Tokens parsed: [" + tokensStr + "]\n";
+            errMsg += "Terminals: {" + terminalsArr.join(", ") + "}\n";
+            errMsg += "Non-terminals: {" + ntArr.join(", ") + "}";
+            throw new Error(errMsg);
+          }
+
+          fullTree = parseResult.node;
+
+          // Build derivation steps from the tree
+          steps = [];
+          buildSteps(fullTree, steps);
+
+          simulationReady = true;
+          currentStep = 0;
+          document.getElementById("tree-svg").style.display = "block";
+          document.getElementById("emptyState").style.display = "none";
+          updateVisibility(currentStep);
+          renderTree();
+          updateStepDisplay();
+          updateStepsChips();
+          updateCounter();
+          updateControls();
+          setStatus("running", "SIMULATING: " + steps.length + " steps");
+          // AUTO-PLAY after short delay
+          setTimeout(function () {
+            startPlaying();
+          }, 400);
+        } catch (err) {
+          setStatus("err", "ERROR: " + err.message);
+          document.getElementById("tree-svg").style.display = "none";
+          document.getElementById("emptyState").style.display = "flex";
+          document.getElementById("stepsChips").innerHTML =
+            '<span style="color:#ff4757;">' + err.message + "</span>";
+          document.getElementById("stepRule").innerHTML =
+            '<span style="color:#ff4757;">' + err.message + "</span>";
+          updateControls();
+        }
+      }
+
+      function goToStep(idx) {
+        if (!simulationReady) return;
+        stopPlaying();
+        currentStep = Math.max(0, Math.min(idx, steps.length - 1));
+        updateVisibility(currentStep);
+        renderTree();
+        updateStepDisplay();
+        updateStepsChips();
+        updateCounter();
+        updateControls();
+        if (currentStep >= steps.length - 1) setStatus("ok", "COMPLETE!");
+      }
+
+      function nextStep() {
+        if (currentStep < steps.length - 1) goToStep(currentStep + 1);
+      }
+      function prevStep() {
+        if (currentStep > 0) goToStep(currentStep - 1);
+      }
+      function togglePlay() {
+        if (isPlaying) stopPlaying();
+        else startPlaying();
+      }
+
+      function startPlaying() {
+        if (!simulationReady || currentStep >= steps.length - 1) return;
+        isPlaying = true;
+        updateControls();
+        setStatus("running", "PLAYING...");
+        playInterval = setInterval(function () {
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateVisibility(currentStep);
+            renderTree();
+            updateStepDisplay();
+            updateStepsChips();
+            updateCounter();
+            if (currentStep >= steps.length - 1) {
+              stopPlaying();
+              setStatus("ok", "COMPLETE!");
+            }
+          } else {
+            stopPlaying();
+          }
+        }, getSpeed());
+      }
+
+      function stopPlaying() {
+        isPlaying = false;
+        if (playInterval) {
+          clearInterval(playInterval);
+          playInterval = null;
+        }
+        updateControls();
+      }
+      function skipToEnd() {
+        stopPlaying();
+        goToStep(steps.length - 1);
+      }
+      function getSpeed() {
+        var v = parseInt(document.getElementById("speedSlider").value);
+        return [2000, 1200, 800, 500, 300][v - 1];
+      }
+
+      document
+        .getElementById("speedSlider")
+        .addEventListener("input", function () {
+          document.getElementById("speedLabel").textContent = [
+            "0.5x",
+            "0.75x",
+            "1x",
+            "1.5x",
+            "2x",
+          ][this.value - 1];
+          if (isPlaying) {
+            stopPlaying();
+            startPlaying();
+          }
+        });
+
+      function setPreset(val) {
+        document.getElementById("inputStr").value = val;
+      }
+
+      function setGrammarPreset(type) {
+        var grammarEl = document.getElementById("grammarInput");
+        var inputEl = document.getElementById("inputStr");
+
+        if (type === "balanced") {
+          // Grammar for a^n b^n (equal a's followed by b's)
+          grammarEl.value = "S -> a S b | a b";
+          inputEl.value = "a a a b b b";
+        } else if (type === "palindrome") {
+          // Palindrome grammar - supports both odd and even length
+          grammarEl.value = "S -> a S a | b S b | a | b | e";
+          inputEl.value = "a b b a";
+        } else if (type === "simple") {
+          // Simple grammar (right-recursive)
+          grammarEl.value = "S -> A B\nA -> a A | a\nB -> b B | b";
+          inputEl.value = "a a b b";
+        } else if (type === "expr") {
+          // Expression grammar (right-recursive, no left recursion)
+          grammarEl.value =
+            "E -> T E'\nE' -> + T E' | e\nT -> F T'\nT' -> * F T' | e\nF -> ( E ) | id | num";
+          inputEl.value = "id + id * id";
+        }
+        clearAll();
+      }
+
+      function clearAll() {
+        stopPlaying();
+        fullTree = null;
+        steps = [];
+        currentStep = -1;
+        simulationReady = false;
+        document.getElementById("tree-svg").style.display = "none";
+        document.getElementById("emptyState").style.display = "flex";
+        document.getElementById("statusDot").className = "status-dot";
+        document.getElementById("statusText").textContent = "READY";
+        document.getElementById("stepsChips").innerHTML =
+          '<span style="opacity:0.4;font-size:0.6rem;color:#888;">No steps yet</span>';
+        document.getElementById("stepNum").textContent = "STEP 0";
+        document.getElementById("stepRule").innerHTML =
+          '<span style="opacity:0.5;">Click START to begin...</span>';
+        document.getElementById("stepExplain").textContent = "";
+        document.getElementById("stepCounter").textContent = "0/0";
+        updateControls();
+      }
+
+      document
+        .getElementById("inputStr")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") startSimulation();
+        });
+      window.addEventListener("resize", function () {
+        if (fullTree && simulationReady) renderTree();
+      });
+    </script>
+  </body>
+</html>
